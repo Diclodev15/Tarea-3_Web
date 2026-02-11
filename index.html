@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pizarra de Baloncesto</title>
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 10px;
+}
+
+.timer {
+    margin-top: 10px;
+    font-size: 80px;
+}
+
+.controls {
+    margin-top: 10px;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.team {
+    background: #222;
+    padding: 20px;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 0 15px #000;
+}
+
+.score {
+    font-size: 70px;
+    margin: 10px 0;
+}
+
+.fouls {
+    font-size: 25px;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #555;
+    color: white;
+}
+
+.fullscreen-btn {
+    background: #00ccff;
+    color: black;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏀 Pizarra de Baloncesto</h1>
+
+<div class="timer" id="timer">10:00</div>
+
+<div class="controls">
+    <button onclick="startTimer()">▶ Iniciar</button>
+    <button onclick="pauseTimer()">⏸ Pausar</button>
+    <button onclick="resetTimer()">🔄 Reiniciar</button>
+    <br>
+    <button class="fullscreen-btn" onclick="openFullscreen()">🖥 Pantalla Completa</button>
+    <button class="fullscreen-btn" onclick="closeFullscreen()">❌ Salir</button>
+</div>
+
+<div class="scoreboard">
+    <div class="team">
+        <h2>Local</h2>
+        <div class="score" id="scoreHome">0</div>
+        <div class="fouls">Faltas: <span id="foulsHome">0</span></div>
+        <button onclick="addPoints('home',1)">+1</button>
+        <button onclick="addPoints('home',2)">+2</button>
+        <button onclick="addPoints('home',3)">+3</button>
+        <br>
+        <button onclick="addFoul('home')">Falta</button>
+        <button onclick="resetTeam('home')">Reset</button>
+    </div>
+
+    <div class="team">
+        <h2>Visitante</h2>
+        <div class="score" id="scoreAway">0</div>
+        <div class="fouls">Faltas: <span id="foulsAway">0</span></div>
+        <button onclick="addPoints('away',1)">+1</button>
+        <button onclick="addPoints('away',2)">+2</button>
+        <button onclick="addPoints('away',3)">+3</button>
+        <br>
+        <button onclick="addFoul('away')">Falta</button>
+        <button onclick="resetTeam('away')">Reset</button>
+    </div>
+</div>
+
+<script>
+let scoreHome = 0;
+let scoreAway = 0;
+let foulsHome = 0;
+let foulsAway = 0;
+
+let minutes = 10;
+let seconds = 0;
+let timer;
+let running = false;
+
+function updateTimer() {
+    let min = minutes < 10 ? "0" + minutes : minutes;
+    let sec = seconds < 10 ? "0" + seconds : seconds;
+    document.getElementById("timer").textContent = min + ":" + sec;
+}
+
+function startTimer() {
+    if (!running) {
+        running = true;
+        timer = setInterval(() => {
+            if (minutes === 0 && seconds === 0) {
+                clearInterval(timer);
+                running = false;
+                alert("⏰ Tiempo terminado");
+            } else {
+                if (seconds === 0) {
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    seconds--;
+                }
+            }
+            updateTimer();
+        }, 1000);
+    }
+}
+
+function pauseTimer() {
+    clearInterval(timer);
+    running = false;
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    running = false;
+    minutes = 10;
+    seconds = 0;
+    updateTimer();
+}
+
+function addPoints(team, points) {
+    if (team === "home") {
+        scoreHome += points;
+        document.getElementById("scoreHome").textContent = scoreHome;
+    } else {
+        scoreAway += points;
+        document.getElementById("scoreAway").textContent = scoreAway;
+    }
+}
+
+function addFoul(team) {
+    if (team === "home") {
+        foulsHome++;
+        document.getElementById("foulsHome").textContent = foulsHome;
+    } else {
+        foulsAway++;
+        document.getElementById("foulsAway").textContent = foulsAway;
+    }
+}
+
+function resetTeam(team) {
+    if (team === "home") {
+        scoreHome = 0;
+        foulsHome = 0;
+        document.getElementById("scoreHome").textContent = scoreHome;
+        document.getElementById("foulsHome").textContent = foulsHome;
+    } else {
+        scoreAway = 0;
+        foulsAway = 0;
+        document.getElementById("scoreAway").textContent = scoreAway;
+        document.getElementById("foulsAway").textContent = foulsAway;
+    }
+}
+
+/* FULLSCREEN */
+function openFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+    }
+}
+
+function closeFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
+}
+
+updateTimer();
+</script>
+
+</body>
+</html>
